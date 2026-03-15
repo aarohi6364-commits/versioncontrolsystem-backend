@@ -46,9 +46,9 @@ async function signup(req, res) {
 
         const result = await usersCollection.insertOne(newUser);
 
-        const token = jwt.sign({id: result.insertId}, process.env.JWT_SECRET_KEY, {expiresIn: "1h"});
+        const token = jwt.sign({id: result.insertedId}, process.env.JWT_SECRET_KEY, {expiresIn: "1h"});
 
-        res.json({token});
+        res.json({ token, userId: result.insertedId });
     } catch(err) {
         console.error("Error during signup : ", err.message);
         res.status(500).send("Server error");
@@ -168,7 +168,7 @@ async function deleteUserProfile(req, res) {
             _id: new ObjectId(currentID)
         });
 
-        if(result.deleteCount == 0){
+        if(result.deletedCount == 0){
             return res.status(404).json({ message: "User not found!" });
         }
 
